@@ -1,6 +1,6 @@
 {
   "name": "@wabarc/broker",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Pack and store webpages from Telegram channel.",
   "main": "./dist/index.js",
   "types": "./dist/type.d.ts",
@@ -35,7 +35,7 @@
   "homepage": "https://github.com/wabarc/broker#readme",
   "dependencies": {
     "@octokit/rest": "^18.0.6",
-    "@wabarc/packer": "^0.0.1",
+    "@wabarc/packer": "^0.0.2",
     "commander": "^6.1.0",
     "ts-node": "^9.0.0"
   },
