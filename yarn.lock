@@ -799,16 +799,16 @@
     "@typescript-eslint/types" "4.4.1"
     eslint-visitor-keys "^2.0.0"
 
-"@wabarc/archiver@^0.0.2":
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/@wabarc/archiver/-/archiver-0.0.2.tgz#23da82886b8899d5bb299f40834abdf0ce65a5cf"
-  integrity sha512-JRBDq69v2M08ebCu0miN9HDf356Mlbw6OGK7iHtwQ3VrzIVZWCT/mQLyZ2AY7BUXkIKq94m0ZFC6xV7OIvqGZA==
+"@wabarc/archiver@^0.0.4":
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/@wabarc/archiver/-/archiver-0.0.4.tgz#3c137f80815807f58117e28ef8a035cf95066091"
+  integrity sha512-HfLrUzKJrkF7Hy9oud1aEyuK3FlPLAKP+R1bkppMOiU/ANPIIfA8STJ13ZwzdXitIULvBoiUlmSmRqWzKH5TsQ==
   dependencies:
-    "@wabarc/cairn" "^1.2.0"
+    "@wabarc/cairn" "^1.2.1"
     axios "^0.20.0"
     jsdom "^16.4.0"
 
-"@wabarc/cairn@^1.2.0":
+"@wabarc/cairn@^1.2.1":
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/@wabarc/cairn/-/cairn-1.2.1.tgz#06a589c1123d4ae284d076994f88d8d99121fee4"
   integrity sha512-QFMvVmrMuBfVnpGqEBio1x7054O03eNmz4wROR4i86GAwrOO4nOPCrRGlNjWtHbpqfk84cBCWBVwH2deKEsHiw==
@@ -817,12 +817,12 @@
     commander "^6.1.0"
     jsdom "^16.4.0"
 
-"@wabarc/packer@^0.0.2":
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/@wabarc/packer/-/packer-0.0.2.tgz#2df4bf9d48f64911ccb29a4c686cfe9a5e3726ba"
-  integrity sha512-+Elp2FL7CmnDqpqGz9SYrPCo/fkbKA2izm3ajvKSbhiMMxO3It1upDfHedMBWab2lSqzS7Da7MZgAVwsnGyk5A==
+"@wabarc/packer@^0.0.3":
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/@wabarc/packer/-/packer-0.0.3.tgz#9f45f025adc2aa197230115cc7894dd55006900b"
+  integrity sha512-nBYBuguvIV5WLtcDEndhjd/oMaYsqyuQ0QrHF7GOdESLfGRDxki+Vo9lYCYXUzaw3ewvewGf/X62qkJXK2OxGw==
   dependencies:
-    "@wabarc/archiver" "^0.0.2"
+    "@wabarc/archiver" "^0.0.4"
 
 abab@^2.0.3:
   version "2.0.5"
