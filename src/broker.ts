@@ -39,7 +39,7 @@ export class Broker {
         const latestID = await github.latestID();
         const packer = await new Packer({
           channel: this.upstream.channel,
-          context: { dir: process.cwd(), from: latestID + 1, to: latestID + 15 },
+          context: { dir: process.cwd(), from: latestID + 1, to: latestID + 25 },
         }).on();
 
         return await github.process(packer);
