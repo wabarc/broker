@@ -14,7 +14,11 @@ export class GitHub {
 
     this.contract = contract;
     this.credentials = { owner, repo };
-    this.octokit = new Octokit({ auth: token });
+    try {
+      this.octokit = new Octokit({ auth: token });
+    } catch (_) {
+      throw new Error('Bad credentials.');
+    }
 
     const date = new Date();
     const month = date.getUTCMonth() + 1;
@@ -102,6 +106,7 @@ export class GitHub {
     } catch (_) {
       return false;
     }
+    console.info('done.');
 
     return true;
   }
@@ -120,15 +125,25 @@ export class GitHub {
     this.credentials.path = path;
 
     // Check file exists GitHub.
-    // If exist, return file sha1 digest
+    // If exist, create new filename
     try {
       // doc: https://octokit.github.io/rest.js/v18#repos-get-content
-      const file = await this.octokit.repos.getContent(this.credentials);
+      // This API returns blobs up to 1 MB in size.
+      const file = await this.octokit.repos.getContent({
+        owner: this.credentials.owner,
+        repo: this.credentials.repo,
+        path: this.credentials.path,
+      });
       this.credentials.sha = file.data.sha;
     } catch (err) {
-      if (err.status !== 404) {
-        unlinkSync(filepath);
-        return false;
+      if (
+        err.status &&
+        err.status === 403 &&
+        err.errors &&
+        err.errors[0]['code'] &&
+        err.errors[0]['code'] === 'too_large'
+      ) {
+        this.credentials.path = `${this.credentials.path}.${Math.random().toString(36).substring(2, 7)}.html`;
       }
     }
 
@@ -141,11 +156,9 @@ export class GitHub {
       // doc: https://octokit.github.io/rest.js/v18#repos-create-or-update-file-contents
       const response = await this.octokit.repos.createOrUpdateFileContents(this.credentials);
       const succeed = response.data !== undefined && response.data.content.path === path;
-      console.log(response.data.content.path, path);
       if (succeed) {
         this.credentials.sha = response.data.commit.sha || '';
       }
-
       unlinkSync(filepath);
 
       return succeed;
