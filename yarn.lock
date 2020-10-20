@@ -817,10 +817,10 @@
     commander "^6.1.0"
     jsdom "^16.4.0"
 
-"@wabarc/packer@^0.0.3":
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/@wabarc/packer/-/packer-0.0.3.tgz#9f45f025adc2aa197230115cc7894dd55006900b"
-  integrity sha512-nBYBuguvIV5WLtcDEndhjd/oMaYsqyuQ0QrHF7GOdESLfGRDxki+Vo9lYCYXUzaw3ewvewGf/X62qkJXK2OxGw==
+"@wabarc/packer@^0.0.4":
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/@wabarc/packer/-/packer-0.0.4.tgz#4c51ee5aab056fbda2d1ff064789428ad34ebd99"
+  integrity sha512-c61+tZ88FO8Z/qrpMMwCpVXMoclDFlD3nor+dQR15amUVM1sA7zzoTtbs3K/LqUUKpAttPJoQBTEXm5GAzi1IQ==
   dependencies:
     "@wabarc/archiver" "^0.0.4"
 
