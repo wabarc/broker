@@ -112,7 +112,7 @@ export class GitHub {
   }
 
   private async createContent(filepath: string): Promise<boolean> {
-    console.info('Process createContent start...');
+    console.info('Process createContent start... ' + filepath);
     // Check file exists.
     try {
       await fs.stat(filepath);
@@ -125,7 +125,6 @@ export class GitHub {
     this.credentials.path = path;
 
     // Check file exists GitHub.
-    // If exist, create new filename
     try {
       // doc: https://octokit.github.io/rest.js/v18#repos-get-content
       // This API returns blobs up to 1 MB in size.
@@ -143,13 +142,12 @@ export class GitHub {
         err.errors[0]['code'] &&
         err.errors[0]['code'] === 'too_large'
       ) {
+        // If exist, create new filename
         this.credentials.path = `${this.credentials.path}.${Math.random().toString(36).substring(2, 7)}.html`;
       }
     }
 
-    const operator = this.credentials.sha === undefined ? 'Add ' : 'Update ';
-
-    this.credentials.message = operator + basename(filepath);
+    this.credentials.message = `Add ${basename(this.credentials.path)}`;
     this.credentials.content = await fs.readFile(filepath, { encoding: 'base64' });
 
     try {
