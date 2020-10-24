@@ -143,7 +143,8 @@ export class GitHub {
         err.errors[0]['code'] === 'too_large'
       ) {
         // If exist, create new filename
-        this.credentials.path = `${this.credentials.path}.${Math.random().toString(36).substring(2, 7)}.html`;
+        const ext = Math.random().toString(36).substring(2, 7) + '.html';
+        this.credentials.path = this.credentials.path.replace(/\.(htm|html)$/g, ext);
       }
     }
 
