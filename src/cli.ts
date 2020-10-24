@@ -26,7 +26,7 @@ const main = async () => {
   program
     .name('broker')
     .usage('[subcommand] [options]')
-    .version('0.0.1', '-v, --version', 'output the current version')
+    .version('0.1.0', '-v, --version', 'output the current version')
     .description('CLI tool for distribute webpages to Wayback Machine.');
 
   program
