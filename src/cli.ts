@@ -3,18 +3,25 @@ import { Command } from 'commander';
 import { Broker } from './broker';
 
 async function github(cmd) {
-  const { token, owner, repo, channel } = cmd;
+  const { token, owner, repo, channel, limit } = cmd;
   if (!token || !owner || !repo || !channel) {
     cmd.help();
     process.exit(0);
   }
-  const broker = new Broker().source({ channel: channel }).github({ token, owner, repo });
+
+  const broker = new Broker()
+    .source({ channel: channel, limit: process.env.BROKER_MSG_LIMIT || limit })
+    .github({ token, owner, repo });
 
   await broker.begin().then(() => process.exit());
 }
 
 const main = async () => {
   const program = new Command();
+
+  const toInt = (v) => {
+    return parseInt(v);
+  };
 
   program
     .name('broker')
@@ -31,6 +38,7 @@ const main = async () => {
     .option('-r, --repo [string]', 'GitHub repository name.')
     .option('-s, --source [string] <source>', 'Webpages source', 'telegram')
     .option('-c, --channel [string]', 'source platform name')
+    .option('-l, --limit [number]', 'fetch message limit one time', toInt, 25)
     .action(github);
 
   await program.parseAsync(process.argv);
