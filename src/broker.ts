@@ -36,10 +36,11 @@ export class Broker {
     switch (this.point.toLowerCase()) {
       case 'github': {
         const github = this.handler;
+        const limit = this.upstream.limit || 25;
         const latestID = await github.latestID();
         const packer = await new Packer({
           channel: this.upstream.channel,
-          context: { dir: process.cwd(), from: latestID + 1, to: latestID + 25 },
+          context: { dir: process.cwd(), from: latestID + 1, to: latestID + limit },
         }).on();
 
         return await github.process(packer);

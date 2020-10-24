@@ -43,8 +43,11 @@ Options:
   -r, --repo [string]             GitHub repository name.
   -s, --source [string] <source>  Webpages source (default: "telegram")
   -c, --channel [string]          source platform name
+  -l, --limit [number]            fetch message limit one time (default: 25)
   -h, --help                      display help for command
 ```
+
+If the environment variable `BROKER_MSG_LIMIT` exists, it used as the `--limit` option.
 
 As npm package:
 

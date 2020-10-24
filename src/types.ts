@@ -19,4 +19,5 @@ export declare type Config = {
 export declare type Upstream = {
   platform?: 'telegram';
   channel: string;
+  limit?: number;
 };
