@@ -35,7 +35,7 @@
   "homepage": "https://github.com/wabarc/broker#readme",
   "dependencies": {
     "@octokit/rest": "^18.0.6",
-    "@wabarc/packer": "^0.0.4",
+    "@wabarc/packer": "^0.0.5",
     "commander": "^6.1.0",
     "ts-node": "^9.0.0"
   },
