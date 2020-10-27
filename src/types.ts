@@ -1,10 +1,3 @@
-export declare type Task = {
-  id: number;
-  url: string;
-  path: string;
-  success: boolean;
-};
-
 export declare type Context = {
   dir: string;
   from: number;
