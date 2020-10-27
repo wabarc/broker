@@ -31,13 +31,13 @@ export class GitHub {
     let task: Task;
 
     for (task of stages) {
-      await this.createContent(task.path).then((success) => {
-        if (task.path.length > 1) {
+      if (task.success === true && task.path.length > 1) {
+        await this.createContent(task.path).then((success) => {
           task.success = success;
           task.path = success ? `${this.folder}/${basename(task.path)}` : '';
           created.push(task);
-        }
-      });
+        });
+      }
     }
 
     return await this.tagging(created);
