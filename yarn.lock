@@ -806,10 +806,10 @@
     commander "^6.1.0"
     iconv-lite "^0.6.2"
 
-"@wabarc/packer@^0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@wabarc/packer/-/packer-0.1.0.tgz#76b3c0a275bebefdc943d314c0c772d449edc94c"
-  integrity sha512-QY6HQuZJuzQd0fI726xa11eOamhnhF9lCARVX/ptRf2PbTEsH7u0a+PFjdCHSLJnpGTzI0twPCTUjq5OE01qLg==
+"@wabarc/packer@^0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@wabarc/packer/-/packer-0.1.1.tgz#d7566642f7a925cb18a99251924a58b7a3fd4de8"
+  integrity sha512-xavGW6e8g8V3TUgb4Yc1lW5QbwNY0uL+nIFx+itVq3BgOFNuz5ky4cI9Vr2OMxzUYJuGjalZQr9A2sdoZVzkwg==
   dependencies:
     "@wabarc/archiver" "^0.2.0"
     html-minifier "^4.0.0"
