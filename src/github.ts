@@ -154,7 +154,7 @@ export class GitHub {
     try {
       // doc: https://octokit.github.io/rest.js/v18#repos-create-or-update-file-contents
       const response = await this.octokit.repos.createOrUpdateFileContents(this.credentials);
-      const succeed = response.data !== undefined && response.data.content.path === path;
+      const succeed = response.data !== undefined && response.data.commit !== undefined;
       if (succeed) {
         this.credentials.sha = response.data.commit.sha || '';
       }
