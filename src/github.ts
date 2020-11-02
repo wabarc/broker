@@ -27,6 +27,10 @@ export class GitHub {
   }
 
   async process(stages: Task[]): Promise<boolean> {
+    if (!stages || stages.length < 1) {
+      return true;
+    }
+
     const created: Task[] = [];
     let task: Task;
 
@@ -61,14 +65,14 @@ export class GitHub {
   private async tagging(stages: Task): Promise<boolean> {
     console.info('Process tagging start...');
     if (!stages || stages.length < 1) {
-      console.info('Process tagging error, message: params stages invalid.');
+      console.info('Process tagging failure, message: params stages invalid.');
       return false;
     }
 
     const from = stages[0].id || -1;
     const to = stages[stages.length - 1].id || -1;
     if (from <= 0 || to <= 0 || from > to) {
-      console.info('Process tagging error, message: params [from, to] invalid.');
+      console.info('Process tagging failure, message: params [from, to] invalid.');
       return false;
     }
 
@@ -163,7 +167,7 @@ export class GitHub {
       return succeed;
     } catch (_) {
       unlinkSync(filepath);
-      console.info('Process createContent error...');
+      console.info('Process createContent failure...');
       return false;
     }
   }
