@@ -65,7 +65,7 @@ export class GitHub {
   private async tagging(stages: Task): Promise<boolean> {
     console.info('Process tagging start...');
     if (!stages || stages.length < 1) {
-      console.info('Process tagging failure, message: params stages invalid.');
+      console.info('Process tagging failure, message: without task, skip.');
       return false;
     }
 
