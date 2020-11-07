@@ -74,4 +74,4 @@ The available instance methods are listed below.
 
 ## License
 
-This software is released under the terms of the GNU General Public License v3.0. See the [LICENSE](https://github.com/wabarc/broker/blob/master/LICENSE) file for details.
+This software is released under the terms of the GNU General Public License v3.0. See the [LICENSE](https://github.com/wabarc/broker/blob/main/LICENSE) file for details.
