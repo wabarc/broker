@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2020-11-08
+
+### Added
+- Add [duty-machine](https://github.com/duty-machine/duty-machine) supports.
+
 ## [0.1.3] - 2020-10-27
 
 ### Fixed
