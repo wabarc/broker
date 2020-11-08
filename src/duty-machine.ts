@@ -1,12 +1,13 @@
 import { Octokit } from '@octokit/rest';
 import { ReposListTagsResponseData } from '@octokit/types';
 import { Task } from '@wabarc/packer';
-import { promises as fs, unlinkSync } from 'fs';
+import { unlinkSync } from 'fs';
 import { basename } from 'path';
+import axios from 'axios';
 
-export class GitHub {
+export class DutyMachine {
   private prefix = 'broker.';
-  private folder: string;
+  private suffix = '.dtmc';
   private octokit: Octokit;
   private credentials;
 
@@ -20,11 +21,6 @@ export class GitHub {
     } catch (_) {
       throw new Error('Bad credentials.');
     }
-
-    const date = new Date();
-    const month = date.getUTCMonth() + 1;
-    const year = date.getUTCFullYear();
-    this.folder = `contents/${year}${month.toString().padStart(2, '0')}`;
   }
 
   async process(stages: Task[]): Promise<boolean> {
@@ -35,11 +31,14 @@ export class GitHub {
     const created: Task[] = [];
     let task: Task;
 
+    stages = this.filter(stages);
     for (task of stages) {
       if (task.success === true && task.path.length > 1) {
-        await this.createContent(task.path).then((success) => {
+        // delete file
+        unlinkSync(task.path);
+
+        await this.submit(task.url).then((success) => {
           task.success = success;
-          task.path = success ? `${this.folder}/${basename(task.path)}` : '';
           created.push(task);
         });
       }
@@ -50,7 +49,7 @@ export class GitHub {
 
   async latestID(): Promise<number> {
     const matchTag = <T extends ReposListTagsResponseData>(tags: T): any | undefined => {
-      const regexp = new RegExp(`${this.prefix}\\d+\\-\\d+$`.replace(/\./g, '\\$&'), 'g');
+      const regexp = new RegExp(`${this.prefix}\\d+\\-\\d+${this.suffix}`.replace(/\./g, '\\$&'), 'g');
       for (const tag of Object.values(tags)) {
         if (regexp.test(tag.name)) {
           return tag;
@@ -70,7 +69,7 @@ export class GitHub {
       }
 
       const latest = tag.name || '';
-      const id = latest.replace(this.prefix, '').split('-')[1] || '';
+      const id = latest.replace(this.prefix, '').replace(this.suffix, '').split('-')[1] || '';
       return id.length > 0 ? parseInt(id) : 0;
     } catch (_) {
       return 0;
@@ -95,7 +94,7 @@ export class GitHub {
     const credentials = {
       owner: this.credentials.owner,
       repo: this.credentials.repo,
-      tag: `${this.prefix}${from}-${to}`,
+      tag: `${this.prefix}${from}-${to}${this.suffix}`,
       message: `\n${JSON.stringify(stages, null, 2)}\n`,
       object: this.credentials.sha,
       type: commit,
@@ -130,18 +129,61 @@ export class GitHub {
     return true;
   }
 
-  private async createContent(filepath: string): Promise<boolean> {
-    console.info('Process createContent start... ' + filepath);
-    // Check file exists.
-    try {
-      await fs.stat(filepath);
-    } catch (_) {
-      console.info(`Process createContent, file [${filepath}] not exists...`);
+  private filter(stages: Task[]): Task[] {
+    const allowList = [
+      'chinadigitaltimes.net',
+      'matters.news',
+      'www.rfa.org',
+      'telegra.ph',
+      'mp.weixin.qq.com',
+      'zhuanlan.zhihu.com',
+    ];
+    const doubanList = ['www.douban.com', 'm.douban.com'];
+    const matchDouban = (url: string) => {
+      return (
+        url.indexOf('douban.com/note') > -1 ||
+        url.indexOf('douban.com/group/topic') > -1 ||
+        url.indexOf('douban.com/doubanapp/dispatch') > -1
+      );
+    };
+    const weiboList = ['weibo.com', 'www.weibo.com', 'card.weibo.com'];
+    const matchWeibo = (url: string) => {
+      return url.indexOf('weibo.com/ttarticle') > -1;
+    };
+
+    // return matched url.
+    return Object.values(stages).filter((task) => {
+      const url = task.url || '';
+      try {
+        const u = new URL(url);
+        const host = u.hostname || '';
+        if (doubanList.includes(host)) {
+          return matchDouban(url);
+        }
+        if (weiboList.includes(host)) {
+          return matchWeibo(url);
+        }
+
+        return host.length !== 0 && allowList.includes(host);
+      } catch (_) {
+        return false;
+      }
+      return false;
+    });
+  }
+
+  private async submit(url: string): Promise<boolean> {
+    console.info('Process submit start... ');
+    if (!url || url.length === 0) {
       return false;
     }
 
-    const path = `${this.folder}/${basename(filepath)}`;
-    this.credentials.path = path;
+    const api = 'https://archives.duty-machine.now.sh/api/submit';
+    const params = new URLSearchParams();
+    params.append('url', url);
+    axios.post(api, params, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
+
+    this.credentials.path = `foo.bar`;
 
     // Check file exists GitHub.
     try {
@@ -167,8 +209,8 @@ export class GitHub {
       }
     }
 
-    this.credentials.message = `Add ${basename(this.credentials.path)}`;
-    this.credentials.content = await fs.readFile(filepath, { encoding: 'base64' });
+    this.credentials.message = `Add ${basename(this.credentials.path)} via rest api`;
+    this.credentials.content = Buffer.from(Math.random().toString(36)).toString('base64');
 
     try {
       // doc: https://octokit.github.io/rest.js/v18#repos-create-or-update-file-contents
@@ -177,11 +219,10 @@ export class GitHub {
       if (succeed) {
         this.credentials.sha = response.data.commit.sha || '';
       }
-      unlinkSync(filepath);
 
       return succeed;
     } catch (_) {
-      unlinkSync(filepath);
+      console.log(_);
       console.info('Process createContent failure...');
       return false;
     }
