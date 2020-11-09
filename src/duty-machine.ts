@@ -1,11 +1,13 @@
 import { Octokit } from '@octokit/rest';
+import { ReposListTagsResponseData } from '@octokit/types';
 import { Task } from '@wabarc/packer';
 import { unlinkSync } from 'fs';
 import { basename } from 'path';
 import axios from 'axios';
 
 export class DutyMachine {
-  private prefix = 'broker.dtmc.';
+  private prefix = 'broker.';
+  private suffix = '.dtmc';
   private octokit: Octokit;
   private credentials;
 
@@ -50,25 +52,28 @@ export class DutyMachine {
   }
 
   async latestID(): Promise<number> {
-    // \S+broker\.dtmc\.
-    const regexp = new RegExp(`\\S+${this.prefix}`.replace(/\./g, '\\$&'), 'g');
+    const matchTag = <T extends ReposListTagsResponseData>(tags: T): any | undefined => {
+      const regexp = new RegExp(`${this.prefix}\\d+\\-\\d+${this.suffix}`.replace(/\./g, '\\$&'), 'g');
+      for (const tag of Object.values(tags)) {
+        if (regexp.test(tag.name)) {
+          return tag;
+        }
+      }
+    };
+
     try {
-      const tags = await this.octokit.git.listMatchingRefs({
-        owner: this.credentials.owner,
-        repo: this.credentials.repo,
-        ref: 'tags/' + this.prefix,
-      });
-      if (!tags || tags.data === undefined) {
+      const tags = await this.octokit.repos.listTags(this.credentials);
+      if (!tags || !tags.data) {
         return 0;
       }
 
-      const tag = tags.data[0];
+      const tag = matchTag(tags.data);
       if (tag === undefined) {
         return 0;
       }
 
-      const latest = tag.ref || '';
-      const id = latest.replace(regexp, '').split('-')[1] || '';
+      const latest = tag.name || '';
+      const id = latest.replace(this.prefix, '').replace(this.suffix, '').split('-')[1] || '';
       return id.length > 0 ? parseInt(id) : 0;
     } catch (_) {
       return 0;
@@ -93,7 +98,7 @@ export class DutyMachine {
     const credentials = {
       owner: this.credentials.owner,
       repo: this.credentials.repo,
-      tag: `${this.prefix}${from}-${to}`,
+      tag: `${this.prefix}${from}-${to}${this.suffix}`,
       message: `\n${JSON.stringify(stages, null, 2)}\n`,
       object: this.credentials.sha,
       type: commit,

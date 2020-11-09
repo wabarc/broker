@@ -1,10 +1,11 @@
 import { Octokit } from '@octokit/rest';
+import { ReposListTagsResponseData } from '@octokit/types';
 import { Task } from '@wabarc/packer';
 import { promises as fs, unlinkSync } from 'fs';
 import { basename } from 'path';
 
 export class GitHub {
-  private prefix = 'broker.gh.';
+  private prefix = 'broker.';
   private folder: string;
   private octokit: Octokit;
   private credentials;
@@ -48,25 +49,28 @@ export class GitHub {
   }
 
   async latestID(): Promise<number> {
-    // \S+broker\.gh\.
-    const regexp = new RegExp(`\\S+${this.prefix}`.replace(/\./g, '\\$&'), 'g');
+    const matchTag = <T extends ReposListTagsResponseData>(tags: T): any | undefined => {
+      const regexp = new RegExp(`${this.prefix}\\d+\\-\\d+$`.replace(/\./g, '\\$&'), 'g');
+      for (const tag of Object.values(tags)) {
+        if (regexp.test(tag.name)) {
+          return tag;
+        }
+      }
+    };
+
     try {
-      const tags = await this.octokit.git.listMatchingRefs({
-        owner: this.credentials.owner,
-        repo: this.credentials.repo,
-        ref: 'tags/' + this.prefix,
-      });
-      if (!tags || tags.data === undefined) {
+      const tags = await this.octokit.repos.listTags(this.credentials);
+      if (!tags || !tags.data) {
         return 0;
       }
 
-      const tag = tags.data[0];
+      const tag = matchTag(tags.data);
       if (tag === undefined) {
         return 0;
       }
 
-      const latest = tag.ref || '';
-      const id = latest.replace(regexp, '').split('-')[1] || '';
+      const latest = tag.name || '';
+      const id = latest.replace(this.prefix, '').split('-')[1] || '';
       return id.length > 0 ? parseInt(id) : 0;
     } catch (_) {
       return 0;
