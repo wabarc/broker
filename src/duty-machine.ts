@@ -6,8 +6,7 @@ import { basename } from 'path';
 import axios from 'axios';
 
 export class DutyMachine {
-  private prefix = 'broker.';
-  private suffix = '.dtmc';
+  private prefix = 'broker.dtmc.';
   private octokit: Octokit;
   private credentials;
 
@@ -53,7 +52,7 @@ export class DutyMachine {
 
   async latestID(): Promise<number> {
     const matchTag = <T extends ReposListTagsResponseData>(tags: T): any | undefined => {
-      const regexp = new RegExp(`${this.prefix}\\d+\\-\\d+${this.suffix}`.replace(/\./g, '\\$&'), 'g');
+      const regexp = new RegExp(`${this.prefix}\\d+\\-\\d+$`.replace(/\./g, '\\$&'), 'g');
       for (const tag of Object.values(tags)) {
         if (regexp.test(tag.name)) {
           return tag;
@@ -73,7 +72,7 @@ export class DutyMachine {
       }
 
       const latest = tag.name || '';
-      const id = latest.replace(this.prefix, '').replace(this.suffix, '').split('-')[1] || '';
+      const id = latest.replace(this.prefix, '').split('-')[1] || '';
       return id.length > 0 ? parseInt(id) : 0;
     } catch (_) {
       return 0;
@@ -98,7 +97,7 @@ export class DutyMachine {
     const credentials = {
       owner: this.credentials.owner,
       repo: this.credentials.repo,
-      tag: `${this.prefix}${from}-${to}${this.suffix}`,
+      tag: `${this.prefix}${from}-${to}`,
       message: `\n${JSON.stringify(stages, null, 2)}\n`,
       object: this.credentials.sha,
       type: commit,

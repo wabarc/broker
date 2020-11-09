@@ -5,7 +5,7 @@ import { promises as fs, unlinkSync } from 'fs';
 import { basename } from 'path';
 
 export class GitHub {
-  private prefix = 'broker.';
+  private prefix = 'broker.gh.';
   private folder: string;
   private octokit: Octokit;
   private credentials;
