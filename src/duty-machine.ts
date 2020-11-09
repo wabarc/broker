@@ -28,21 +28,25 @@ export class DutyMachine {
       return true;
     }
 
-    const created: Task[] = [];
     let task: Task;
-
-    stages = this.filter(stages);
-    for (task of stages) {
+    const tasks = this.filter(stages);
+    for (task of tasks) {
       if (task.success === true && task.path.length > 1) {
         // delete file
-        unlinkSync(task.path);
+        try {
+          unlinkSync(task.path);
+        } catch (_) {}
 
-        await this.submit(task.url).then((success) => {
-          task.success = success;
-          created.push(task);
-        });
+        await this.submit(task.url);
       }
     }
+
+    const created = Object.values(stages)
+      .filter((stage) => stage.path.length > 1)
+      .map((stage) => {
+        stage.path = basename(stage.path);
+        return stage;
+      });
 
     return await this.tagging(created);
   }
@@ -209,7 +213,7 @@ export class DutyMachine {
       }
     }
 
-    this.credentials.message = `Add ${basename(this.credentials.path)} via rest api`;
+    this.credentials.message = `Submit ${url} to duty-machine`;
     this.credentials.content = Buffer.from(Math.random().toString(36)).toString('base64');
 
     try {
