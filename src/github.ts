@@ -50,7 +50,7 @@ export class GitHub {
 
   async latestID(): Promise<number> {
     const matchTag = <T extends ReposListTagsResponseData>(tags: T): any | undefined => {
-      const regexp = new RegExp(`${this.prefix}\\d+\\-\\d+$`.replace(/\./g, '\\$&'), 'g');
+      const regexp = new RegExp(`${this.prefix}\\d+\\-\\d+`.replace(/\./g, '\\$&'), 'g');
       for (const tag of Object.values(tags)) {
         if (regexp.test(tag.name)) {
           return tag;
