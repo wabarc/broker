@@ -109,8 +109,13 @@ export class DutyMachine {
       // doc: https://octokit.github.io/rest.js/v18#git-create-tag
       const response = await this.octokit.git.createTag(credentials);
       tagSha = response.data.sha || this.credentials.sha;
-    } finally {
-      console.info('Process tagging, created tag object.');
+    } catch (err) {
+      console.warn(
+        `Process tagging failure, message: create tag object error, details: ${err.message}, data: ${JSON.stringify(
+          credentials,
+        )}`,
+      );
+      return false;
     }
 
     const ref = {
