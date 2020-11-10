@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.6] - 2020-11-10
+
+### Fixed
+- Catch tagging error.
+- Create a commit without matched.
+
 ## [0.2.3] - 2020-11-09
 
 ### Changed
