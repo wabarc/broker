@@ -24,7 +24,17 @@ export class DutyMachine {
 
   async process(stages: Task[]): Promise<boolean> {
     if (!stages || stages.length < 1) {
-      return true;
+      return false;
+    }
+
+    const created = Object.values(stages)
+      .filter((stage) => stage.path.length > 1)
+      .map((stage) => {
+        stage.path = basename(stage.path);
+        return stage;
+      });
+    if (created.length === 0) {
+      return false;
     }
 
     let task: Task;
@@ -40,12 +50,10 @@ export class DutyMachine {
       }
     }
 
-    const created = Object.values(stages)
-      .filter((stage) => stage.path.length > 1)
-      .map((stage) => {
-        stage.path = basename(stage.path);
-        return stage;
-      });
+    // If without tasks, create a commit for tagging.
+    if (tasks.length === 0) {
+      await this.submit('');
+    }
 
     return await this.tagging(created);
   }
@@ -182,14 +190,13 @@ export class DutyMachine {
 
   private async submit(url: string): Promise<boolean> {
     console.info('Process submit start... ');
-    if (!url || url.length === 0) {
-      return false;
-    }
 
-    const api = 'https://archives.duty-machine.now.sh/api/submit';
-    const params = new URLSearchParams();
-    params.append('url', url);
-    axios.post(api, params, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
+    if (url && url.length > 0) {
+      const api = 'https://archives.duty-machine.now.sh/api/submit';
+      const params = new URLSearchParams();
+      params.append('url', url);
+      axios.post(api, params, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
+    }
 
     this.credentials.path = `foo.bar`;
 
@@ -217,7 +224,7 @@ export class DutyMachine {
       }
     }
 
-    this.credentials.message = `Submit ${url} to duty-machine`;
+    this.credentials.message = url ? `Submit ${url} to duty-machine` : `Ignore`;
     this.credentials.content = Buffer.from(Math.random().toString(36)).toString('base64');
 
     try {
