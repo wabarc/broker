@@ -17,6 +17,7 @@
   "rules": {
     "no-debugger": "off",
     "@typescript-eslint/no-explicit-any": "off",
+    "jest/no-disabled-tests": "off",
     "no-empty": "warn",
     "no-console": 0
   }

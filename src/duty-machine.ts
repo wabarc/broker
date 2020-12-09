@@ -147,44 +147,28 @@ export class DutyMachine {
 
   private filter(stages: Task[]): Task[] {
     const allowList = [
-      'chinadigitaltimes.net',
-      'matters.news',
-      'www.rfa.org',
-      'telegra.ph',
-      'mp.weixin.qq.com',
-      'zhuanlan.zhihu.com',
+      /mp\.weixin\.qq\.com/,
+      /https?:\/\/matters\.news/,
+      /chinadigitaltimes\.net/,
+      /https?:\/\/www\.rfa\.org/,
+      /telegra\.ph/,
+      /https?:\/\/(www|zhuanlan)\.zhihu\.com\/(question\/\d+\/answer\/\d+|p\/\d+)/,
+      /https?:\/\/(www|m)\.douban\.com\/(note|doubanapp\/dispatch\?uri=\/(note\/|group\/topic\/)|group\/topic\/)/,
+      /https?:\/\/(www\.|m\.|card\.|weibointl\.api\.)?weibo\.(com|cn)\/(status\/\d+|\d+\/|share\/\d+|detail\/\d+|ttarticle\/p\/show|article\/m\/show\/id)/,
     ];
-    const doubanList = ['www.douban.com', 'm.douban.com'];
-    const matchDouban = (url: string) => {
-      return (
-        url.indexOf('douban.com/note') > -1 ||
-        url.indexOf('douban.com/group/topic') > -1 ||
-        url.indexOf('douban.com/doubanapp/dispatch') > -1
-      );
-    };
-    const weiboList = ['weibo.com', 'www.weibo.com', 'card.weibo.com'];
-    const matchWeibo = (url: string) => {
-      return url.indexOf('weibo.com/ttarticle') > -1;
-    };
 
     // return matched url.
     return Object.values(stages).filter((task) => {
       const url = task.url || '';
-      try {
-        const u = new URL(url);
-        const host = u.hostname || '';
-        if (doubanList.includes(host)) {
-          return matchDouban(url);
-        }
-        if (weiboList.includes(host)) {
-          return matchWeibo(url);
-        }
-
-        return host.length !== 0 && allowList.includes(host);
-      } catch (_) {
+      if (url.length == 0) {
         return false;
       }
-      return false;
+
+      const matched = allowList.filter((regexp) => {
+        return regexp.test(url);
+      });
+
+      return matched.length > 0;
     });
   }
 
