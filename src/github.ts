@@ -1,5 +1,5 @@
 import { Octokit } from '@octokit/rest';
-import { ReposListTagsResponseData } from '@octokit/types';
+import { Endpoints } from '@octokit/types';
 import { Task } from '@wabarc/packer';
 import { promises as fs, unlinkSync } from 'fs';
 import { basename } from 'path';
@@ -49,7 +49,8 @@ export class GitHub {
   }
 
   async latestID(): Promise<number> {
-    const matchTag = <T extends ReposListTagsResponseData>(tags: T): any | undefined => {
+    type reposListTagsResponseData = Endpoints['GET /repos/{owner}/{repo}/tags']['response']['data'];
+    const matchTag = <T extends reposListTagsResponseData>(tags: T): any | undefined => {
       const regexp = new RegExp(`${this.prefix}\\d+\\-\\d+`.replace(/\./g, '\\$&'), 'g');
       for (const tag of Object.values(tags)) {
         if (regexp.test(tag.name)) {
@@ -59,12 +60,14 @@ export class GitHub {
     };
 
     try {
-      const tags = await this.octokit.repos.listTags(this.credentials);
-      if (!tags || !tags.data) {
+      // https://octokit.github.io/rest.js/v18#repos-list-tags
+      type reposListTagsResponseData = Endpoints['GET /repos/{owner}/{repo}/tags']['response'];
+      const response: reposListTagsResponseData = await this.octokit.repos.listTags(this.credentials);
+      if (!response || !response.data) {
         return 0;
       }
 
-      const tag = matchTag(tags.data);
+      const tag = matchTag(response.data);
       if (tag === undefined) {
         return 0;
       }
@@ -152,12 +155,13 @@ export class GitHub {
     try {
       // doc: https://octokit.github.io/rest.js/v18#repos-get-content
       // This API returns blobs up to 1 MB in size.
-      const file = await this.octokit.repos.getContent({
+      type reposGetcontentResponseData = Endpoints['GET /repos/{owner}/{repo}/contents/{path}']['response'];
+      const response: reposGetcontentResponseData = await this.octokit.repos.getContent({
         owner: this.credentials.owner,
         repo: this.credentials.repo,
         path: this.credentials.path,
       });
-      this.credentials.sha = file.data.sha;
+      this.credentials.sha = response.data['sha'];
     } catch (err) {
       if (
         err.status &&

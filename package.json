@@ -34,14 +34,14 @@
   },
   "homepage": "https://github.com/wabarc/broker#readme",
   "dependencies": {
-    "@octokit/rest": "^18.0.9",
+    "@octokit/rest": "^18.0.12",
     "@wabarc/packer": "^0.1.2",
     "axios": "^0.21.1",
     "commander": "^6.2.1"
   },
   "devDependencies": {
-    "@octokit/types": "^5.5.0",
-    "@types/jest": "^26.0.15",
+    "@octokit/types": "^6.1.2",
+    "@types/jest": "^26.0.19",
     "@typescript-eslint/eslint-plugin": "^4.11.0",
     "@typescript-eslint/parser": "^4.11.0",
     "eslint": "^7.16.0",
