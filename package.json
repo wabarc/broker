@@ -11,7 +11,7 @@
     "format": "prettier --write '**/*.ts'",
     "format:check": "prettier --check '**/*.ts'",
     "lint": "eslint ./ --ext .ts",
-    "test": "jest --testTimeout 3000000",
+    "test": "jest --no-cache --testTimeout 3000000",
     "prepub": "npm run clean; npm run format; npm run lint; npm run cli:install && broker -h",
     "clean": "rm -rf ./dist; rm -rf -- *.html"
   },
