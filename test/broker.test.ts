@@ -66,6 +66,24 @@ it('should accept uris', () => {
     },
     {
       id: 1,
+      url: 'https://www.douban.com/people/123/status/456/',
+      path: 'foo/bar',
+      success: true,
+    },
+    {
+      id: 1,
+      url: 'https://m.douban.com/people/123/status/456/',
+      path: 'foo/bar',
+      success: true,
+    },
+    {
+      id: 1,
+      url: 'https://www.douban.com/doubanapp/dispatch?uri=/status/456',
+      path: 'foo/bar',
+      success: true,
+    },
+    {
+      id: 1,
       url: 'https://matters.news/@somebody/title',
       path: 'foo/bar',
       success: true,
@@ -145,6 +163,12 @@ it('should accept uris', () => {
     {
       id: 1,
       url: 'https://zhuanlan.zhihu.com/p/1234',
+      path: 'foo/bar',
+      success: true,
+    },
+    {
+      id: 1,
+      url: 'https://web.archive.org/web/20000101123456/https://example.org',
       path: 'foo/bar',
       success: true,
     },

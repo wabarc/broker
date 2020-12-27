@@ -153,8 +153,9 @@ export class DutyMachine {
       /https?:\/\/www\.rfa\.org/,
       /telegra\.ph/,
       /https?:\/\/(www|zhuanlan)\.zhihu\.com\/(question\/\d+\/answer\/\d+|p\/\d+)/,
-      /https?:\/\/(www|m)\.douban\.com\/(note|doubanapp\/dispatch\?uri=\/(note\/|group\/topic\/)|group\/topic\/)/,
+      /https?:\/\/(www|m)\.douban\.com\/(note|people|doubanapp\/dispatch\?uri=\/(note\/|status\/\d+|group\/topic\/)|group\/topic\/)/,
       /https?:\/\/(www\.|m\.|card\.|weibointl\.api\.)?weibo\.(com|cn)\/(status\/\d+|\d+\/|share\/\d+|detail\/\d+|ttarticle\/p\/show|article\/m\/show\/id)/,
+      /https?:\/\/web\.archive\.org\/web\/\d+\/\S+/,
     ];
 
     // return matched url.
