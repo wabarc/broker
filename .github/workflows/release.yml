@@ -27,7 +27,7 @@ jobs:
     - name: Check out code into the Go module directory
       uses: actions/checkout@v2
     - run: yarn install
-    - run: yarn run test
+    - run: yarn test
 
   release:
     name: Create and upload release
@@ -41,7 +41,8 @@ jobs:
       with:
         tag_name: ${{ github.ref }}
         release_name: Release ${{ github.ref }}
-        body:
+        body: |
+          See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/${{ github.sha }}/CHANGELOG.md).
         draft: false
         prerelease: true
 
