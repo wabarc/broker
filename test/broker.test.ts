@@ -108,6 +108,12 @@ it('should accept uris', () => {
     },
     {
       id: 1,
+      url: 'https://m.weibo.cn/status/abcxyz',
+      path: 'foo/bar',
+      success: true,
+    },
+    {
+      id: 1,
       url: 'https://weibo.com/12341234/xyz',
       path: 'foo/bar',
       success: true,
