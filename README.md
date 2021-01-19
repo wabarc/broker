@@ -32,7 +32,20 @@ As CLI:
 
 ```bash
 $ broker
+Usage: broker [subcommand] [options]
 
+CLI tool for distribute webpages to Wayback Machine.
+
+Options:
+  -v, --version                output the current version
+  -h, --help                   display help for command
+
+Commands:
+  github|gh [options]          Distribute webpages to GitHub repository.
+  duty-machine|duty [options]  Distribute webpages to duty-machine.
+  help [command]               display help for command
+
+$ broker help gh
 Usage: broker github|gh [options]
 
 Distribute webpages to GitHub repository.

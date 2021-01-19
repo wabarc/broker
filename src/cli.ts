@@ -5,11 +5,10 @@ import { Broker } from './broker';
 async function github(cmd) {
   const { token, owner, repo, channel, limit } = cmd;
   if (!token || !owner || !repo || !channel) {
-    cmd.help();
     process.exit(0);
   }
 
-  console.info('broking to GitHub...');
+  console.info('Broking to GitHub...');
 
   const broker = new Broker()
     .source({ channel: channel, limit: process.env.BROKER_MSG_LIMIT || limit })
@@ -21,11 +20,10 @@ async function github(cmd) {
 async function dutyMachine(cmd) {
   const { token, owner, repo, channel, limit } = cmd;
   if (!token || !owner || !repo || !channel) {
-    cmd.help();
     process.exit(0);
   }
 
-  console.info('broking to duty-machine...');
+  console.info('Broking to duty-machine...');
 
   new Broker()
     .source({ channel: channel, limit: process.env.BROKER_MSG_LIMIT || limit })
@@ -40,12 +38,6 @@ const main = async () => {
   const toInt = (v) => {
     return parseInt(v);
   };
-
-  program
-    .name('broker')
-    .usage('[subcommand] [options]')
-    .version('0.1.0', '-v, --version', 'output the current version')
-    .description('CLI tool for distribute webpages to Wayback Machine.');
 
   program
     .command('github', { isDefault: true })
@@ -71,6 +63,13 @@ const main = async () => {
     .option('-c, --channel [string]', 'source platform name')
     .option('-l, --limit [number]', 'fetch message limit one time', toInt, 25)
     .action(dutyMachine);
+
+  program
+    .name('broker')
+    .usage('[subcommand] [options]')
+    .version('0.1.0', '-v, --version', 'output the current version')
+    .description('CLI tool for distribute webpages to Wayback Machine.')
+    .outputHelp();
 
   await program.parseAsync(process.argv);
 };
