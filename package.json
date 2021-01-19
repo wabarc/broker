@@ -37,7 +37,7 @@
     "@octokit/rest": "^18.0.12",
     "@wabarc/packer": "^0.1.2",
     "axios": "^0.21.1",
-    "commander": "=6.2.1"
+    "commander": "=7.0.0"
   },
   "devDependencies": {
     "@octokit/types": "^6.3.2",
