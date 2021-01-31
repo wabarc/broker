@@ -1,6 +1,6 @@
 {
   "name": "@wabarc/broker",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Pack and store webpages from Telegram channel.",
   "main": "./dist/index.js",
   "types": "./dist/type.d.ts",
