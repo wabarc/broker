@@ -14,3 +14,7 @@ export declare type Upstream = {
   channel: string;
   limit?: number;
 };
+export declare type Data4DTMC = {
+  id: number;
+  uris: string[];
+};

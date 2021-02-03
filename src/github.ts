@@ -1,6 +1,6 @@
 import { Octokit } from '@octokit/rest';
 import { Endpoints } from '@octokit/types';
-import { Task } from '@wabarc/packer';
+import { Task } from '@wabarc/archiver';
 import { promises as fs, unlinkSync } from 'fs';
 import { basename } from 'path';
 
@@ -80,7 +80,7 @@ export class GitHub {
     }
   }
 
-  private async tagging(stages: Task): Promise<boolean> {
+  private async tagging(stages: Task[]): Promise<boolean> {
     console.info('Process tagging start...');
     if (!stages || stages.length < 1) {
       console.info('Process tagging failure, message: without task, skip.');

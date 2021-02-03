@@ -1,8 +1,7 @@
 import { Octokit } from '@octokit/rest';
 import { Endpoints } from '@octokit/types';
-import { Task } from '@wabarc/packer';
-import { unlinkSync } from 'fs';
-import { basename } from 'path';
+import { Stage } from '@wabarc/archiver';
+import { Data4DTMC } from './types';
 import axios from 'axios';
 
 export class DutyMachine {
@@ -22,40 +21,39 @@ export class DutyMachine {
     }
   }
 
-  async process(stages: Task[]): Promise<boolean> {
+  async process(stages: Stage[]): Promise<boolean> {
     if (!stages || stages.length < 1) {
       return false;
     }
 
-    const created = Object.values(stages)
-      .filter((stage) => stage.path.length > 1)
-      .map((stage) => {
-        stage.path = basename(stage.path);
-        return stage;
-      });
-    if (created.length === 0) {
-      return false;
-    }
+    const pushed: Data4DTMC[] = [];
+    const tasks = this.transform(stages);
+    for (const task of tasks) {
+      if (!Object.prototype.hasOwnProperty.call(task, 'uris')) {
+        continue;
+      }
+      if (task.uris.length === 0) {
+        continue;
+      }
 
-    let task: Task;
-    const tasks = this.filter(stages);
-    for (task of tasks) {
-      if (task.success === true && task.path.length > 1) {
-        // delete file
-        try {
-          unlinkSync(task.path);
-        } catch (_) {}
+      let succeed = false;
+      for (const uri of task.uris) {
+        if (await this.submit(uri)) {
+          succeed = true;
+        }
+      }
 
-        await this.submit(task.url);
+      if (succeed) {
+        pushed.push(task);
       }
     }
 
     // If without tasks, create a commit for tagging.
-    if (tasks.length === 0) {
+    if (pushed.length === 0) {
       await this.submit('');
     }
 
-    return await this.tagging(created);
+    return await this.tagging(pushed);
   }
 
   async latestID(): Promise<number> {
@@ -90,7 +88,7 @@ export class DutyMachine {
     }
   }
 
-  private async tagging(stages: Task): Promise<boolean> {
+  private async tagging(stages: Data4DTMC[]): Promise<boolean> {
     console.info('Process tagging start...');
     if (!stages || stages.length < 1) {
       console.info('Process tagging failure, message: without task, skip.');
@@ -148,32 +146,63 @@ export class DutyMachine {
     return true;
   }
 
-  private filter(stages: Task[]): Task[] {
+  private transform(stages: Stage[]): Data4DTMC[] {
+    const result: Data4DTMC[] = [];
+    if (stages.length === 0) {
+      return result;
+    }
+
+    const pickup = <T extends string[]>(uris: T): T => {
+      return Object.assign(uris).filter((uri) => this.allow(uri));
+    };
+
+    Object.assign(stages).map((item) => {
+      const { id, stage } = item;
+      const uris: string[] = [];
+      const existOrig: boolean = Object.prototype.hasOwnProperty.call(stage, 'orig');
+      const existPH: boolean = Object.prototype.hasOwnProperty.call(stage, 'ph');
+
+      if (existOrig && existPH) {
+        if (stage.ph.length > stage.orig.length) {
+          uris.push(...stage.ph);
+        } else {
+          const orig: string[] = pickup(stage.orig);
+          const ph: string[] = pickup(stage.ph);
+          const p: string[] = orig.length > 0 ? orig : ph;
+          uris.push(...p);
+        }
+      } else if (existOrig) {
+        uris.push(...pickup(stage.orig));
+      } else if (existPH) {
+        // Assign Telegraph URI if original URI no matched
+        uris.push(...pickup(stage.ph));
+      }
+      result.push({ id: id, uris: uris });
+    });
+
+    return result;
+  }
+
+  private allow(url: string): boolean {
     const allowList = [
-      /mp\.weixin\.qq\.com/,
+      /https?:\/\/mp\.weixin\.qq\.com/,
       /https?:\/\/matters\.news/,
-      /chinadigitaltimes\.net/,
+      /https?:\/\/chinadigitaltimes\.net/,
       /https?:\/\/www\.rfa\.org/,
-      /telegra\.ph/,
+      /https?:\/\/telegra\.ph/,
       /https?:\/\/(www|zhuanlan)\.zhihu\.com\/(question\/\d+\/answer\/\d+|p\/\d+)/,
       /https?:\/\/(www|m)\.douban\.com\/(note|people|doubanapp\/dispatch\?uri=\/(note\/|status\/\d+|group\/topic\/)|group\/topic\/)/,
       /https?:\/\/(www\.|m\.|card\.|weibointl\.api\.)?weibo\.(com|cn)\/(status\/\w+|\d+\/|share\/\d+|detail\/\d+|ttarticle\/p\/show|article\/m\/show\/id)/,
-      /https?:\/\/web\.archive\.org\/web\/\d+\/\S+/,
+      /https?:\/\/shimo\.im\/docs\/\w+/,
+      // /https?:\/\/web\.archive\.org\/web\/\d+\/\S+/,
     ];
 
     // return matched url.
-    return Object.values(stages).filter((task) => {
-      const url = task.url || '';
-      if (url.length == 0) {
-        return false;
-      }
-
-      const matched = allowList.filter((regexp) => {
-        return regexp.test(url);
-      });
-
-      return matched.length > 0;
+    const matched = allowList.filter((regexp) => {
+      return regexp.test(url);
     });
+
+    return matched.length > 0;
   }
 
   private async submit(url: string): Promise<boolean> {

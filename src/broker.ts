@@ -1,4 +1,4 @@
-import { Packer } from '@wabarc/packer';
+import { Archiver } from '@wabarc/archiver';
 import { Upstream } from './types';
 import { GitHub } from './github';
 import { DutyMachine } from './duty-machine';
@@ -7,7 +7,7 @@ export class Broker {
   private upstream;
   private handle;
   private token = '';
-  private point: 'github';
+  private point: 'github' | 'duty-machine';
 
   constructor() {
     this.point = 'github';
@@ -28,6 +28,7 @@ export class Broker {
       throw new Error('GitHub [token, owner, repo] invalid.');
     }
 
+    this.point = 'github';
     this.handle = new GitHub({ token: token, owner: owner, repo: repo });
 
     return this;
@@ -39,6 +40,7 @@ export class Broker {
       throw new Error('GitHub [token, owner, repo] invalid.');
     }
 
+    this.point = 'duty-machine';
     this.handle = new DutyMachine({ token: token, owner: owner, repo: repo });
 
     return this;
@@ -51,11 +53,25 @@ export class Broker {
 
     const limit = this.upstream.limit || 25;
     const latestID = await this.handle.latestID();
-    const packer = await new Packer({
-      channel: this.upstream.channel,
-      context: { dir: process.cwd(), from: latestID + 1, to: latestID + limit },
-    }).on();
+    switch (this.point) {
+      case 'github': {
+        const archived = await new Archiver().do({
+          channel: this.upstream.channel,
+          context: { dir: process.cwd(), from: latestID + 1, to: latestID + limit },
+        });
 
-    return await this.handle.process(packer);
+        return await this.handle.process(archived);
+      }
+      case 'duty-machine': {
+        const stages = await new Archiver().stage({
+          channel: this.upstream.channel,
+          context: { dir: process.cwd(), from: latestID + 1, to: latestID + limit },
+        });
+
+        return await this.handle.process(stages);
+      }
+      default:
+        throw new Error('Entry no found.');
+    }
   }
 }

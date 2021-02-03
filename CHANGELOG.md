@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.3] - 2021-02-05
+
+### Changed
+- Improve archives speed.
+
 ## [0.3.0] - 2021-01-08
 
 ### Added
