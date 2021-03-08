@@ -3,6 +3,7 @@ import { Endpoints } from '@octokit/types';
 import { Task } from '@wabarc/archiver';
 import { promises as fs, unlinkSync } from 'fs';
 import { basename } from 'path';
+import { sleep } from './utils';
 
 export class GitHub {
   private prefix = 'broker.gh.';
@@ -42,6 +43,7 @@ export class GitHub {
           task.path = success ? `${this.folder}/${basename(task.path)}` : '';
           created.push(task);
         });
+        await sleep(500);
       }
     }
 
