@@ -195,6 +195,9 @@ export class DutyMachine {
       /https?:\/\/(www\.|m\.|card\.|weibointl\.api\.)?weibo\.(com|cn)\/(status\/\w+|\d+\/|share\/\d+|detail\/\d+|ttarticle\/p\/show|article\/m\/show\/id)/,
       /https?:\/\/shimo\.im\/docs\/\w+/,
       // /https?:\/\/web\.archive\.org\/web\/\d+\/\S+/,
+      /https?:\/\/(www).acfun\.cn\/a\/\w+/,
+      /https?:\/\/(www).bilibili\.com\/read\/\w+/,
+      /https?:\/\/archiveofourown\.org\/works\/\w+/,
     ];
 
     // return matched url.

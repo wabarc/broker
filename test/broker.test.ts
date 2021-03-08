@@ -42,6 +42,9 @@ it('should accept uris', () => {
     'https://www.zhihu.com/question/1234/answer/5678',
     'https://zhuanlan.zhihu.com/p/1234',
     'https://shimo.im/docs/abc123',
+    'https://www.acfun.cn/a/ac123',
+    'https://www.bilibili.com/read/cv123',
+    'https://archiveofourown.org/works/123',
   ];
   const dtmc = new DutyMachine({ token: 'none', owner: 'foo', repo: 'bar' });
   const matched = urls.filter((url) => {
