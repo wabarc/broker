@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.5] - 2021-03-19
+
+### Added
+- Support specific duty-machine API endpoint use `--endpoint` or `BROKER_DTMC_ENDPOINT`.
+
+### Changed
+- Delay 500 milliseconds to push commit to destination.
+
 ## [0.3.4] - 2021-03-08
 
 ### Changed
