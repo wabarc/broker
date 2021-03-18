@@ -34,14 +34,14 @@ export class Broker {
     return this;
   }
 
-  dutyMachine(gh: { token: string; owner: string; repo: string }): this {
-    const { token, owner, repo } = gh;
+  dutyMachine(gh: { token: string; owner: string; repo: string; endpoint?: string }): this {
+    const { token, owner, repo, endpoint } = gh;
     if (!token || !owner || !repo) {
       throw new Error('GitHub [token, owner, repo] invalid.');
     }
 
     this.point = 'duty-machine';
-    this.handle = new DutyMachine({ token: token, owner: owner, repo: repo });
+    this.handle = new DutyMachine({ token: token, owner: owner, repo: repo, endpoint: endpoint });
 
     return this;
   }

@@ -19,6 +19,7 @@ async function github(cmd) {
 
 async function dutyMachine(cmd) {
   const { token, owner, repo, channel, limit } = cmd;
+  const endpoint = cmd.endpoint || process.env.BROKER_DTMC_ENDPOINT;
   if (!token || !owner || !repo || !channel) {
     process.exit(0);
   }
@@ -27,7 +28,7 @@ async function dutyMachine(cmd) {
 
   new Broker()
     .source({ channel: channel, limit: process.env.BROKER_MSG_LIMIT || limit })
-    .dutyMachine({ token, owner, repo })
+    .dutyMachine({ token, owner, repo, endpoint })
     .begin()
     .then(() => process.exit());
 }
@@ -62,6 +63,7 @@ const main = async () => {
     .option('-s, --source [string] <source>', 'Webpages source', 'telegram')
     .option('-c, --channel [string]', 'source platform name')
     .option('-l, --limit [number]', 'fetch message limit one time', toInt, 25)
+    .option('-p, --endpoint [string]', 'DutyMachine API endpoint')
     .action(dutyMachine);
 
   program

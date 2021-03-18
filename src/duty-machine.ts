@@ -8,11 +8,13 @@ import axios from 'axios';
 export class DutyMachine {
   private prefix = 'broker.dtmc.';
   private octokit: Octokit;
+  private endpoint: string;
   private credentials;
 
-  constructor(private contract: { token: string; owner: string; repo: string }) {
-    const { token, owner, repo } = contract;
+  constructor(private contract: { token: string; owner: string; repo: string; endpoint?: string }) {
+    const { token, owner, repo, endpoint } = contract;
 
+    this.endpoint = endpoint || 'https://archives.duty-machine.now.sh/api/submit';
     this.contract = contract;
     this.credentials = { owner, repo };
     try {
@@ -214,10 +216,9 @@ export class DutyMachine {
     console.info('Process submit start... ');
 
     if (url && url.length > 0) {
-      const api = 'https://archives.duty-machine.now.sh/api/submit';
       const params = new URLSearchParams();
       params.append('url', url);
-      axios.post(api, params, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
+      axios.post(this.endpoint, params, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
     }
 
     this.credentials.path = `foo.bar`;
