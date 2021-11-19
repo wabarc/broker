@@ -41,7 +41,7 @@
   },
   "devDependencies": {
     "@octokit/types": "^6.12.2",
-    "@types/jest": "^26.0.21",
+    "@types/jest": "^27.0.3",
     "@typescript-eslint/eslint-plugin": "^4.18.0",
     "@typescript-eslint/parser": "^4.18.0",
     "eslint": "^7.22.0",
