@@ -1,3 +1,5 @@
+---
+
 name: Docker
 
 on:
@@ -7,10 +9,16 @@ on:
     tags:
       - v*
 
+permissions:
+  contents: read
+
 jobs:
   publish:
     name: Build and push Docker image
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      id-token: write
     steps:
       - name: Checkout default branch
         uses: actions/checkout@v2
@@ -58,4 +66,3 @@ jobs:
           platforms: linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64,linux/ppc64le,linux/s390x
           push: true
           tags: ${{ steps.prep.outputs.tags }}
-
